@@ -1,10 +1,10 @@
 package routers
 
 import (
+	"example.com/m/config/global"
+	"example.com/m/module"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"mytest/master/config/global"
-	"mytest/master/module"
 	"net/http"
 	"time"
 )
@@ -34,8 +34,8 @@ func initRouters() *gin.Engine {
 	r.Use(gin.Logger())
 	r.Use(global.Recovery())
 	//load file
-	r.Static("/static", "view/static")
-	r.LoadHTMLGlob("view/login.html")
+	r.Static("../static", "static")
+	r.LoadHTMLGlob("view/*.html")
 
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "login.html", gin.H{})
@@ -44,5 +44,8 @@ func initRouters() *gin.Engine {
 	//先不做拦截器
 	routerVersion := r.Group("/v1.0/api")
 	module.RegisterRoutes(routerVersion)
+	routerVersion.GET("/home", func(c *gin.Context) {
+		c.HTML(200, "index.html", gin.H{})
+	})
 	return r
 }

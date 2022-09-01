@@ -1,8 +1,8 @@
 package user
 
 import (
+	"example.com/m/utils/response"
 	"github.com/gin-gonic/gin"
-	"mytest/master/utils/response"
 )
 
 type Controller struct{}
@@ -13,5 +13,7 @@ func (self Controller) RegisterRoute(r *gin.RouterGroup) {
 }
 
 func (self *Controller) WebLogin(c *gin.Context) (data map[string]interface{}, err error) {
-	return data, nil
+	data = make(map[string]interface{})
+	data["msg"] = "11111"
+	return data, err
 }

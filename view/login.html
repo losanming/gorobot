@@ -1,28 +1,50 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=drive-width,initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link rel="stylesheet" href="./static/css/login.css">
-    <!-- font-awesome 图标字体 http://www.fontawesome.com.cn/faicons/#web-application -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" media="screen" rel="stylesheet" type="text/css">
-    <title>Demo</title>
+    <meta charset="UTF-8">
+    <title>MyDemo</title>
+    <script src="../static/javascripts/jquery-3.6.1.min.js"></script>
 </head>
-<div id="login-box">
-    <h1>Login</h1>
-    <div class="form">
-        <div class="item">
-            <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-            <input type="text" placeholder="Username">
-        </div>
-        <div class="item">
-            <i class="fa fa-key" aria-hidden="true"></i>
-            <input type="text" placeholder="Password">
+<body class="login">
+<div class="scrollbar-macosx">
+    <div class="main container ">
+        <div class="jumbotron">
+            <div class="input-group">
+                <div class="item">
+                    <i class="fa fa-user-circle-o" aria-hidden="true"></i>
+                    <input type="text" class="form-control" placeholder="输入你的昵称，不少于两位" required>
+                </div>
+                <div class="item">
+                    <i class="fa fa-key" aria-hidden="true"></i>
+                    <input type="password" class="form-control" placeholder="密码，不少于6位" required>
+                </div>
+                <button id="login" class="btn btn-default" type="submit">
+                    <span class="">登录/注册</span>
+                </button>
+            </div>
         </div>
     </div>
-    <button>Login</button>
 </div>
-<body>
 </body>
+<script>
+    $(document).ready(function (){
+           $('#login').click(function (event){
+               let userName = $('.login input[type=text]').val(); // 用户昵称
+               let pwd = $('.login input[type=password]').val(); // 用户昵称
+
+               $.post("/v1.0/api/user/WebLogin", {
+                   username: userName,
+                   password: pwd
+               }, function (res) {
+                   if (res.code != 200) {
+                       return false;
+                   }else {
+                       window.location.assign("/v1.0/api/home");
+                   }
+               });
+           })
+    })
+</script>
+
+
 </html>

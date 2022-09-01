@@ -1,9 +1,9 @@
 package module
 
 import (
+	"example.com/m/config/global"
 	"github.com/jinzhu/gorm"
 	_ "gorm.io/driver/mysql"
-	"mytest/master/config/global"
 	"time"
 )
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="../static/javascripts/jquery-3.6.1.min.js"></script>
+    <title>Title</title>
+</head>
+<body>
+        Hi  websocket!!!
+
+        <input type="text" value="" id="text">
+        <button type="submit" id="btn_submit" onclick="btnAction()"> submit </button>
+</body>
+</html>
+<script>
+    let socket = new WebSocket("ws://127.0.0.1:8199/v1.0/api/ws")
+    console.log("Attempting Connection...");
+
+    socket.onopen = () => {
+        console.log("Successfully Connected");
+    };
+
+    function btnAction()        {
+        let v = document.getElementById("text").value
+        socket.send(v)
+    }
+
+
+    //接收到消息的回调方法
+    socket.onmessage = function (event) {
+        console.log("event",event)
+            alert("okokok")
+        }
+
+
+    socket.onclose = event => {
+        console.log("Socket Closed Connection: ", event);
+        socket.send("Client Closed!")
+    };
+
+    socket.onerror = error => {
+        console.log("Socket Error: ", error);
+    };
+</script>
+

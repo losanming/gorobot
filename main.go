@@ -1,11 +1,11 @@
 package main
 
 import (
+	"example.com/m/config"
+	"example.com/m/module"
+	"example.com/m/routers"
 	"github.com/sirupsen/logrus"
 	"io"
-	"mytest/master/config"
-	"mytest/master/module"
-	"mytest/master/routers"
 	"os"
 )
 
