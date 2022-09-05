@@ -2,6 +2,7 @@ package module
 
 import (
 	"example.com/m/config/global"
+	db2 "example.com/m/module/db"
 	"github.com/jinzhu/gorm"
 	_ "gorm.io/driver/mysql"
 	"time"
@@ -29,6 +30,6 @@ func InitDB() error {
 	db.SetConnMaxLifetime(time.Hour)
 
 	//@@TODO 生成表格
-
+	DB.CreateTable(&db2.User{})
 	return nil
 }

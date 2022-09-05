@@ -3,6 +3,7 @@ package routers
 import (
 	"example.com/m/config/global"
 	"example.com/m/module"
+	"example.com/m/utils/response"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"net/http"
@@ -33,16 +34,16 @@ func initRouters() *gin.Engine {
 	//打印和异常处理
 	r.Use(gin.Logger())
 	r.Use(global.Recovery())
+	r.Use(response.Cors())
 	//load file
 	r.Static("../static", "static")
 	r.LoadHTMLGlob("view/*.html")
-
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "login.html", gin.H{})
 	})
 	//路由分配
 	//先不做拦截器
-	routerVersion := r.Group("/v1.0/api")
+	routerVersion := r.Group("")
 	module.RegisterRoutes(routerVersion)
 	routerVersion.GET("/home", func(c *gin.Context) {
 		c.HTML(200, "index.html", gin.H{})

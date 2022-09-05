@@ -1,50 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>MyDemo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 引入css文件 -->
+    <link rel="stylesheet" href="../static/stylesheets/login.css">
+    <!-- 引入jquery -->
+
     <script src="../static/javascripts/jquery-3.6.1.min.js"></script>
+    <title>登录</title>
 </head>
-<body class="login">
-<div class="scrollbar-macosx">
-    <div class="main container ">
-        <div class="jumbotron">
-            <div class="input-group">
-                <div class="item">
-                    <i class="fa fa-user-circle-o" aria-hidden="true"></i>
-                    <input type="text" class="form-control" placeholder="输入你的昵称，不少于两位" required>
-                </div>
-                <div class="item">
-                    <i class="fa fa-key" aria-hidden="true"></i>
-                    <input type="password" class="form-control" placeholder="密码，不少于6位" required>
-                </div>
-                <button id="login" class="btn btn-default" type="submit">
-                    <span class="">登录/注册</span>
-                </button>
-            </div>
+<body>
+<!-- 最外层的大盒子 -->
+<div class="box">
+    <!-- 滑动盒子 -->
+    <div class="pre-box">
+        <h1>WELCOME</h1>
+        <p>JOIN US!</p>
+        <div class="img-box">
+            <img src="../static/images/login/waoku.jpg" alt="">
+        </div>
+    </div>
+    <!-- 注册盒子 -->
+    <div class="register-form">
+        <!-- 标题盒子 -->
+        <div class="title-box">
+            <h1>注册</h1>
+        </div>
+        <!-- 输入框盒子 -->
+        <div class="input-box">
+            <input type="text" name="register_user_name" id="register_username" placeholder="用户名">
+            <input type="password" name="register_pass_word" id="register_password" placeholder="密码">
+            <input type="password" name="register_pass_word_again" id="register_password_again" placeholder="确认密码">
+        </div>
+        <!-- 按钮盒子 -->
+        <div class="btn-box">
+            <button id="register">注册</button>
+            <!-- 绑定点击事件 -->
+            <p onclick="mySwitch()">已有账号?去登录</p>
+        </div>
+    </div>
+    <!-- 登录盒子 -->
+    <div class="login-form">
+        <!-- 标题盒子 -->
+        <div class="title-box">
+            <h1>登录</h1>
+        </div>
+        <!-- 输入框盒子 -->
+        <div class="input-box">
+            <input id="username" name="username" type="text" placeholder="用户名">
+            <input id="pwd" type="password" placeholder="密码">
+        </div>
+        <!-- 按钮盒子 -->
+        <div class="btn-box">
+            <button id="login" type="submit">登录</button>
+            <!-- 绑定点击事件 -->
+            <p onclick="mySwitch()">没有账号?去注册</p>
         </div>
     </div>
 </div>
-</body>
+<script>
+    // 滑动的状态
+    let flag=true
+    const mySwitch=()=>{
+        if(flag){
+            // 获取到滑动盒子的dom元素并修改它移动的位置
+            $(".pre-box").css("transform","translateX(100%)")
+            // 获取到滑动盒子的dom元素并修改它的背景颜色
+            $(".pre-box").css("background-color","#c9e0ed")
+            //修改图片的路径
+            $("img").attr("src","../static/images/login/wuwu.jpeg")
+
+        }
+        else {
+            $(".pre-box").css("transform","translateX(0%)")
+            $(".pre-box").css("background-color","#edd4dc")
+            $("img").attr("src","../static/images/login/waoku.jpg")
+        }
+        flag=!flag
+    }
+</script>
 <script>
     $(document).ready(function (){
-           $('#login').click(function (event){
-               let userName = $('.login input[type=text]').val(); // 用户昵称
-               let pwd = $('.login input[type=password]').val(); // 用户昵称
+        $('#login').click(function (event){
+            let userName = $('#username').val()
+            let pwd = $('#pwd').val()
+            $.post("/user/WebLogin", {
+                "user_name": userName,
+                "pass_word": pwd
+            }, function (res) {
+                if (res.code != 200) {
+                    return false;
+                }else {
+                    window.location.assign("/home");
+                }
+            },"json");
+        })
+    });
 
-               $.post("/v1.0/api/user/WebLogin", {
-                   username: userName,
-                   password: pwd
-               }, function (res) {
-                   if (res.code != 200) {
-                       return false;
-                   }else {
-                       window.location.assign("/v1.0/api/home");
-                   }
-               });
-           })
-    })
+    $(document).ready(function (){
+
+        $('#register').click(function (event){
+            let userName = $('#register_username').val()
+            let pwd = $('#register_password').val()
+            let pwd_again = $('#register_password_again').val()
+            if (pwd !== pwd_again) {
+                alert("密码不一致");
+                return false
+            }
+            $.post("/user/WebRegister", {
+                user_name: userName,
+                pass_word: pwd,
+            }, function (res) {
+                if (res.code != 200) {
+                    return false;
+                }else {
+                    window.location.assign("/");
+                    alert("注册成功快快登录吧！")
+                }
+            },"json");
+        })
+
+    });
+
+
 </script>
-
-
+<script>
+    const bubleCreate=()=>{
+        // 获取body元素
+        const body = document.body
+        // 创建泡泡元素
+        const buble = document.createElement('span')
+        // 设置泡泡半径
+        let r = Math.random()*5 + 25 //半径大小为25~30
+        // 设置泡泡的宽高
+        buble.style.width=r+'px'
+        buble.style.height=r+'px'
+        // 设置泡泡的随机起点
+        buble.style.left=Math.random()*innerWidth+'px'
+        // 为body添加buble元素
+        body.append(buble)
+        // 4s清除一次泡泡
+        setTimeout(()=>{
+            buble.remove()
+        },4000)
+    }
+    // 每200ms生成一个泡泡
+    setInterval(() => {
+        bubleCreate()
+    }, 200);
+</script>
+</body>
 </html>

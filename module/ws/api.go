@@ -76,8 +76,8 @@ func reader(conn *websocket.Conn) {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("p : ", string(p))
-		json.Unmarshal(p, &clientMsg)
+		var recv = string(p)
+		clientMsg.Data = recv
 		sMsg <- clientMsg
 		//if err := conn.WriteMessage(messageType, p); err != nil {
 		//	fmt.Println("err : ", err)
@@ -93,19 +93,22 @@ func writer(conn *websocket.Conn) {
 			return
 		}
 	}()
-	select {
-	case cl := <-sMsg:
-		serveMsgStr, _ := json.Marshal(cl)
-		notify(conn, string(serveMsgStr))
-	default:
-		return
+	for {
+		select {
+		case cl := <-sMsg:
+			serveMsgStr, _ := json.Marshal(cl)
+			notify(conn, string(serveMsgStr))
+		}
 	}
-
 }
 
 // 统一消息发放
 func notify(conn *websocket.Conn, msg string) {
 	chNotify <- 1 // 利用channel阻塞 避免并发去对同一个连接发送消息出现panic: concurrent write to websocket connection这样的异常
-	conn.WriteMessage(1, []byte(msg))
+	err := conn.WriteMessage(1, []byte(msg))
+	if err != nil {
+		fmt.Println("err : ", err)
+		return
+	}
 	<-chNotify
 }

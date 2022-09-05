@@ -8,7 +8,7 @@ import (
 
 const (
 	INFO  = "info"
-	DBURL = "root:root@tcp(127.0.0.1:3306)/chat?charset=utf8mb4&parseTime=True&loc=Local"
+	DBURL = "root:root@tcp(127.0.0.1:3306)/chat?charset=utf8&parseTime=True&loc=Local"
 )
 
 var (
