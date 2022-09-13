@@ -39,9 +39,9 @@ func (self *Controller) WebLogin(c *gin.Context) (data map[string]interface{}, e
 	if err != nil {
 		return nil, errors.New("密码错误")
 	}
-
 	data = make(map[string]interface{})
 	data["msg"] = "ok"
+	data["user_name"] = result.UserName
 	data["user_id"] = result.Id
 	return data, err
 }

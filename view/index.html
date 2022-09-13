@@ -13,7 +13,8 @@
 </body>
 </html>
 <script>
-    let socket = new WebSocket("ws://127.0.0.1:8199/ws")
+    let user_id = window.sessionStorage.getItem("user_id")
+    let socket = new WebSocket("ws://127.0.0.1:8199/ws?user_id="+user_id)
     console.log("Attempting Connection...");
 
     socket.onopen = () => {

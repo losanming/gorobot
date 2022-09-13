@@ -15,7 +15,6 @@ type Message struct {
 
 func (m Message) GetMessageList(page, pagesize int) (result []Message, err error) {
 	db := global.GDB
-	defer db.Close()
 	err = db.Model(&Message{}).Limit(pagesize).Offset(page - 1).Scan(&result).Error
 	if err != nil {
 		return result, err
@@ -25,17 +24,11 @@ func (m Message) GetMessageList(page, pagesize int) (result []Message, err error
 
 func (m *Message) CreateMessage() (err error) {
 	db := global.GDB
-	defer db.Close()
-	err = db.Create(&m).Error
-	if err != nil {
-		return err
-	}
-	return err
+	return db.Create(&m).Error
 }
 
 func (m *Message) DeleteMessageById(err error) {
 	db := global.GDB
-	defer db.Close()
 	err = db.Delete(&m).Error
 	if err != nil {
 		return

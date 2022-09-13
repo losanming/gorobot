@@ -91,9 +91,12 @@
                 "user_name": userName,
                 "pass_word": pwd
             }, function (res) {
+                console.log("res :",res)
                 if (res.code != 200) {
                     return false;
                 }else {
+                    window.sessionStorage.setItem("user_id",res.data.user_id)
+                    window.sessionStorage.setItem("user_name",res.data.user_name)
                     window.location.assign("/home");
                 }
             },"json");

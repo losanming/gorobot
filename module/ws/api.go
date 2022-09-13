@@ -2,11 +2,15 @@ package ws
 
 import (
 	"encoding/json"
+	"example.com/m/module/db"
 	"example.com/m/utils/response"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 type Controller struct{}
@@ -34,8 +38,15 @@ func (self Controller) RegisterRoute(r *gin.RouterGroup) {
 }
 
 func Start(c *gin.Context) (data map[string]interface{}, err error) {
-	Run(c)
 	data = make(map[string]interface{})
+	result := c.Query("user_id")
+	if result == "" {
+		logrus.Error("id is empty")
+		return data, err
+	}
+	id, _ := strconv.Atoi(result)
+	Run(c, id)
+
 	return data, nil
 }
 
@@ -44,7 +55,7 @@ var upgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 }
 
-func Run(gin *gin.Context) {
+func Run(gin *gin.Context, user_id int) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 	ws, _ := upgrader.Upgrade(gin.Writer, gin.Request, nil)
 	defer ws.Close()
@@ -56,13 +67,13 @@ func Run(gin *gin.Context) {
 		fmt.Println("err : ", err)
 		return
 	}
-	go reader(ws)
+	go reader(ws, user_id)
 	go writer(ws)
 	select {}
 
 }
 
-func reader(conn *websocket.Conn) {
+func reader(conn *websocket.Conn, user_id int) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println("panic err : ", err)
@@ -77,6 +88,17 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 		var recv = string(p)
+		var message = &db.Message{
+			UserId:     user_id,
+			Content:    string(p),
+			CreateTime: time.Now(),
+			UpdateTime: time.Now(),
+		}
+		err = message.CreateMessage()
+		if err != nil {
+			logrus.Error("err : ", err)
+			return
+		}
 		clientMsg.Data = recv
 		sMsg <- clientMsg
 		//if err := conn.WriteMessage(messageType, p); err != nil {
