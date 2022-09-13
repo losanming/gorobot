@@ -31,5 +31,6 @@ func InitDB() error {
 
 	//@@TODO 生成表格
 	DB.CreateTable(&db2.User{})
+	DB.CreateTable(&db2.Message{})
 	return nil
 }

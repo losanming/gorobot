@@ -23,6 +23,7 @@ type UserLogin struct {
 
 func (u *User) Create() error {
 	db := global.GDB
+	defer db.Close()
 	err := db.Transaction(func(tx *gorm.DB) error {
 		return tx.Create(&u).Error
 	})
@@ -35,6 +36,7 @@ func (u User) FindUserInfoByUserName() (result User, err error) {
 	}
 
 	db := global.GDB
+	defer db.Close()
 	err = db.Model(&User{}).Where("user_name = ? ", u.UserName).Scan(&result).Error
 	return result, err
 }

@@ -1,6 +1,7 @@
 package module
 
 import (
+	"example.com/m/module/message"
 	"example.com/m/module/user"
 	"example.com/m/module/ws"
 	"github.com/gin-gonic/gin"
@@ -9,4 +10,5 @@ import (
 func RegisterRoutes(r *gin.RouterGroup) {
 	new(user.Controller).RegisterRoute(r)
 	new(ws.Controller).RegisterRoute(r)
+	new(message.Controller).RegisterRoute(r)
 }
