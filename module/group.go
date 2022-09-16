@@ -1,5 +1,12 @@
 package module
 
+import (
+	"encoding/json"
+	"fmt"
+	"mytest/cqhttpServer/global"
+	"mytest/cqhttpServer/utils"
+)
+
 type GroupInfo struct {
 	GroupId         int64  `json:"group_id"`          //群号
 	GroupName       string `json:"group_name"`        //群名称
@@ -34,4 +41,36 @@ type GroupMemberInfo struct {
 
 type GroupMemberList struct {
 	GroupMemberInfos []GroupMemberInfo `json:"data"`
+}
+type GroupMemberInfoList struct {
+	GroupId       int64
+	GroupInfoList GroupMemberList
+}
+
+func GetGroupList() (group_list GroupList, err error) {
+	url := global.HOSTPORT + "get_group_list"
+	resp, err := utils.SendRequest(url, nil, nil, "GET")
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(resp, &group_list)
+	if err != nil {
+		return
+	}
+	return group_list, err
+}
+func GetGroupMemberInfoByGroupId(id int64) (temp GroupMemberInfoList, err error) {
+	var group_member_info_list GroupMemberList
+	url := global.HOSTPORT + fmt.Sprintf("get_group_member_list?group_id=%v&no_cache=false", id)
+	resp, err := utils.SendRequest(url, nil, nil, "GET")
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(resp, &group_member_info_list)
+	if err != nil {
+		return
+	}
+	temp.GroupId = id
+	temp.GroupInfoList = group_member_info_list
+	return temp, err
 }

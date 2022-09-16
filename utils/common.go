@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mytest/cqhttpServer/global"
 	"net/http"
 	"time"
 )
@@ -47,4 +48,9 @@ func SendRequest(url string, body io.Reader, addHeaders map[string]string, metho
 	}
 
 	return
+}
+
+func GetBaseUrl(path string) (url string) {
+	url = global.HOSTPORT + path
+	return url
 }
