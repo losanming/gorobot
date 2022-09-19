@@ -1,10 +1,10 @@
 package main
 
 import (
+	"example.com/m/utils"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
-	"mytest/cqhttpServer/utils"
 	"os"
 )
 

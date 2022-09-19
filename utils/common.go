@@ -3,10 +3,10 @@ package utils
 import (
 	"encoding/base64"
 	"errors"
+	"example.com/m/global"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"mytest/cqhttpServer/global"
 	"net/http"
 	"strings"
 	"time"
