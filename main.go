@@ -4,16 +4,18 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io"
-	"mytest/cqhttpServer/module"
+	"mytest/cqhttpServer/utils"
 	"os"
 )
 
 func main() {
-	list, err := module.GetGroupList()
-	if err != nil {
-		logrus.Errorln(err)
-	}
-	fmt.Println(list)
+	//list, err := module.GetGroupList()
+	//if err != nil {
+	//	logrus.Errorln(err)
+	//}
+	//fmt.Println(list)
+	utils.GetMenuInfo()
+	fmt.Println("over")
 }
 
 func init() {

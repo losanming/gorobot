@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"mytest/cqhttpServer/global"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -53,4 +54,18 @@ func SendRequest(url string, body io.Reader, addHeaders map[string]string, metho
 func GetBaseUrl(path string) (url string) {
 	url = global.HOSTPORT + path
 	return url
+}
+
+func GetBetweenStr(str, start, end string) string {
+	n := strings.Index(str, start)
+	if n == -1 {
+		n = 0
+	}
+	str = string([]byte(str)[n:])
+	m := strings.Index(str, end)
+	if m == -1 {
+		m = len(str)
+	}
+	str = string([]byte(str)[:m])
+	return str
 }
