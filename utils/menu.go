@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"strings"
 )
 
@@ -11,20 +14,20 @@ type Menu struct {
 	Info string
 }
 
-func GetMenuInfo() (err error) {
-	var menu_lists []Menu
-	resp, err := SendRequest(MENUURL, nil, nil, "GET")
+func GetMenuInfo(page int) (menu_lists []Menu, err error) {
+	url := fmt.Sprintf("http://n3.datasn.io/data/api/v1/n3_chennan/caipu_daquan_1/main/list/%v/", page)
+	resp, err := SendRequest(url, nil, nil, "GET")
 	if err != nil {
-		return err
+		return menu_lists, err
 	}
 	menu_list := strings.Split(string(resp), "tbody")
 	if len(menu_list) == 0 || len(menu_list) != 3 {
-		return nil
+		return menu_lists, nil
 	}
 
 	menu_info := strings.Split(menu_list[1], "<td class=\"row_id saa-head\">")
 	if len(menu_info) == 0 {
-		return err
+		return menu_lists, err
 	}
 
 	for _, v := range menu_info {
@@ -51,5 +54,17 @@ func GetMenuInfo() (err error) {
 		}
 	}
 
-	return err
+	return menu_lists, err
+}
+
+func GetMenusListByFile() (menu_lists []Menu, err error) {
+	file, err := ioutil.ReadFile("Menus/menus")
+	if err != nil {
+		return menu_lists, err
+	}
+	err = json.Unmarshal(file, &menu_lists)
+	if err != nil {
+		return menu_lists, err
+	}
+	return menu_lists, err
 }

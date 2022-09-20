@@ -2,7 +2,7 @@ package module
 
 import (
 	"encoding/json"
-	"mytest/cqhttpServer/utils"
+	"example.com/m/utils"
 )
 
 type FriendInfo struct {

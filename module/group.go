@@ -2,9 +2,9 @@ package module
 
 import (
 	"encoding/json"
+	"example.com/m/global"
+	"example.com/m/utils"
 	"fmt"
-	"mytest/cqhttpServer/global"
-	"mytest/cqhttpServer/utils"
 )
 
 type GroupInfo struct {
@@ -46,6 +46,11 @@ type GroupMemberInfoList struct {
 	GroupId       int64
 	GroupInfoList GroupMemberList
 }
+type SendGroupMsg struct {
+	GroupId    int64  `json:"group_id"`
+	Message    string `json:"message"`
+	AutoEscape bool   `json:"auto_escape"`
+}
 
 func GetGroupList() (group_list GroupList, err error) {
 	url := global.HOSTPORT + "get_group_list"
@@ -73,4 +78,8 @@ func GetGroupMemberInfoByGroupId(id int64) (temp GroupMemberInfoList, err error)
 	temp.GroupId = id
 	temp.GroupInfoList = group_member_info_list
 	return temp, err
+}
+
+func SendGroupMsgByGroupId(group_id int64, msg string) {
+
 }

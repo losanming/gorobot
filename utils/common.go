@@ -1,16 +1,24 @@
 package utils
 
 import (
-	"encoding/base64"
+	"bytes"
+	"encoding/json"
 	"errors"
 	"example.com/m/global"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
 )
+
+type SendGroupMsg struct {
+	GroupId    int64  `json:"group_id"`
+	Message    string `json:"message"`
+	AutoEscape bool   `json:"auto_escape"`
+}
 
 func SendRequest(url string, body io.Reader, addHeaders map[string]string, method string) (resp []byte, err error) {
 	// 创建req
@@ -18,10 +26,7 @@ func SendRequest(url string, body io.Reader, addHeaders map[string]string, metho
 	if err != nil {
 		return nil, err
 	}
-	checkTime := time.Now().Format("2006-01-02 15")
-	checkTimeStr := base64.StdEncoding.EncodeToString([]byte(checkTime))
 	request.Header.Add("Content-Type", "application/json")
-	request.Header.Add("token", checkTimeStr)
 	//设置headers
 	if len(addHeaders) > 0 {
 		for k, v := range addHeaders {
@@ -68,4 +73,25 @@ func GetBetweenStr(str, start, end string) string {
 	}
 	str = string([]byte(str)[:m])
 	return str
+}
+
+func GetRandomIndex() int64 {
+	rand.Seed(time.Now().UnixNano())
+	n := rand.Int63n(199) + 1
+	return n
+}
+
+func SendMsgById(group_id int64, msg string) (err error) {
+	var send SendGroupMsg
+	send.GroupId = group_id
+	send.Message = msg
+	send.AutoEscape = false
+	data, _ := json.Marshal(send)
+
+	url := global.HOSTPORT + fmt.Sprintf("send_group_msg")
+	_, err = SendRequest(url, bytes.NewBuffer(data), nil, "POST")
+	if err != nil {
+		return err
+	}
+	return err
 }
