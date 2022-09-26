@@ -17,8 +17,6 @@ import (
 )
 
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	c := global.C
-	c = make(chan []string)
 	if r.Method != "POST" {
 		logrus.Errorln("request method is not post")
 		return
@@ -37,8 +35,8 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logrus.Errorln("find_group result is nil")
 		return
 	}
-	if find.(string) != "group" || find_group.(int64) != 413944516 {
-		logrus.Println("find_type: ", find.(string), " group: ", find_group.(int64))
+	if find.(string) != "group" || find_group.(float64) != global.MOYUQUN {
+		logrus.Println("find_type: ", find.(string), " group: ", find_group.(float64))
 		return
 	}
 	// 获取消息
@@ -47,23 +45,51 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		logrus.Errorln("find_msg result is nil")
 		return
 	}
-	split := strings.Split(find_msg.(string), ":")
+	split := strings.Split(find_msg.(string), "=")
 	if len(split) != 2 {
-		logrus.Errorln("split len is wrong")
+		logrus.Errorln("split len is wrong", split)
 		return
 	}
-	c <- split
-	service.BeginChannel(c)
-	fmt.Println("input channel channel")
-	close(c)
+	//通道和协程处理后面写,后面要拆开实现
+	if split[0] == "百科" {
+		err, rs := service.GetWikiInfo(split[1])
+		if err != nil {
+			logrus.Errorln(err)
+			return
+		}
+		err = module.SendMsgById(global.MOYUQUN, rs)
+		if err != nil {
+			logrus.Errorln(err)
+		}
+	} else if split[0] == "天气" {
+		err2, result := service.GetWeather(split[1])
+		if err2 != nil {
+			logrus.Errorln("err: ", err2)
+			return
+		}
+		message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,  出门建议:%s", result.Date, result.Week, result.City, result.Wea,
+			result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
+		err := module.SendMsgById(global.MOYUQUN, message)
+		if err != nil {
+			logrus.Errorln(err)
+		}
+	}
 }
 
 func main() {
+	go BeginTask()
+	logrus.Println("定时任务开始")
 	http.HandleFunc("/", ServeHTTP)
-
+	logrus.Println("监听开始")
 	//监听httpserver
 	server := &http.Server{Addr: ":5701"}
-	defer server.Close()
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("err: ", err)
+		} else {
+			defer server.Close()
+		}
+	}()
 	err := server.ListenAndServe()
 	if !ErrHandler(err) {
 		return

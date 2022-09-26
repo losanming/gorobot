@@ -1,8 +1,10 @@
 package global
 
 const (
-	HOSTPORT = "http://121.4.141.62:5700/"
-	WIKIURL  = "https://api.wer.plus/api/dub?t="
+	HOSTPORT      = "http://121.4.141.62:5700/"
+	LOCALHOSTPORT = "http://127.0.0.1:5700/"
+	MOYUQUN       = 413944516
+	DAIBIAODAHUI  = 540513551
 	// 处理协议
 	BAIKE  = 1 // 维基百科  百科:
 	TIANQI = 2 // 天气   天气:
