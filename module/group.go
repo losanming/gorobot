@@ -1,6 +1,7 @@
 package module
 
 import (
+	"bytes"
 	"encoding/json"
 	"example.com/m/global"
 	"example.com/m/utils"
@@ -82,4 +83,19 @@ func GetGroupMemberInfoByGroupId(id int64) (temp GroupMemberInfoList, err error)
 
 func SendGroupMsgByGroupId(group_id int64, msg string) {
 
+}
+
+func SendMsgById(group_id int64, msg string) (err error) {
+	var send SendGroupMsg
+	send.GroupId = group_id
+	send.Message = msg
+	send.AutoEscape = false
+	data, _ := json.Marshal(send)
+
+	url := global.HOSTPORT + fmt.Sprintf("send_group_msg")
+	_, err = utils.SendRequest(url, bytes.NewBuffer(data), nil, "POST")
+	if err != nil {
+		return err
+	}
+	return err
 }

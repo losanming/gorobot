@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
 	"example.com/m/global"
 	"fmt"
@@ -13,12 +11,6 @@ import (
 	"strings"
 	"time"
 )
-
-type SendGroupMsg struct {
-	GroupId    int64  `json:"group_id"`
-	Message    string `json:"message"`
-	AutoEscape bool   `json:"auto_escape"`
-}
 
 func SendRequest(url string, body io.Reader, addHeaders map[string]string, method string) (resp []byte, err error) {
 	// 创建req
@@ -79,19 +71,4 @@ func GetRandomIndex() int64 {
 	rand.Seed(time.Now().UnixNano())
 	n := rand.Int63n(199) + 1
 	return n
-}
-
-func SendMsgById(group_id int64, msg string) (err error) {
-	var send SendGroupMsg
-	send.GroupId = group_id
-	send.Message = msg
-	send.AutoEscape = false
-	data, _ := json.Marshal(send)
-
-	url := global.HOSTPORT + fmt.Sprintf("send_group_msg")
-	_, err = SendRequest(url, bytes.NewBuffer(data), nil, "POST")
-	if err != nil {
-		return err
-	}
-	return err
 }
