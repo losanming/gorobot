@@ -5,7 +5,17 @@ import (
 	"time"
 )
 
-var baodi int = 0 //出金小保底 全局变量
+var dian int = 0       //出紫点数10
+var dia *int = &dian   //指针 出紫点数
+var DIAN int = 0       //出金进度77+
+var DIA *int = &DIAN   //指针 出金点数
+var chance int         //抽卡随机数
+var cha *int = &chance //指针 抽卡随机数
+var count int = 0      //目前抽卡数
+var cou *int = &count  //指针 目前抽卡数
+var sum int = 0        //总抽卡数
+var su *int = &sum     //指针 总抽卡数
+var baodi int = 0      //出金小保底 全局变量
 func xiaobaodi() string {
 	if baodi == 0 {
 		var a int = rand.Intn(10)
@@ -145,16 +155,7 @@ func DrawCord(t int) []string {
 	// 三星概率：85.40%
 	rand.Seed(time.Now().Unix()) //作为随机数种子
 	//
-	var dian int = 0       //出紫点数10
-	var dia *int = &dian   //指针 出紫点数
-	var DIAN int = 0       //出金进度77+
-	var DIA *int = &DIAN   //指针 出金点数
-	var chance int         //抽卡随机数
-	var cha *int = &chance //指针 抽卡随机数
-	var count int = 0      //目前抽卡数
-	var cou *int = &count  //指针 目前抽卡数
-	var sum int = 0        //总抽卡数
-	var su *int = &sum     //指针 总抽卡数
+
 	var final_card []string
 	if t == 1 {
 		count++
