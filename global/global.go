@@ -12,3 +12,8 @@ const (
 )
 
 var C chan []string
+
+// APIKEYS
+const (
+	FUTUREWEATHERKEY = "251518e073ef6c3c9504dd286c3f6a86"
+)

@@ -92,7 +92,7 @@ func SendMsgById(group_id int64, msg string) (err error) {
 	send.AutoEscape = false
 	data, _ := json.Marshal(send)
 
-	url := global.HOSTPORT + fmt.Sprintf("send_group_msg")
+	url := global.LOCALHOSTPORT + fmt.Sprintf("send_group_msg")
 	_, err = utils.SendRequest(url, bytes.NewBuffer(data), nil, "POST")
 	if err != nil {
 		return err

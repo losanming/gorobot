@@ -13,7 +13,9 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
+	"time"
 )
 
 func ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -27,15 +29,13 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 	find := gojsonq.New().FromString(string(resp)).Find("message_type")
 	if find == nil {
-		logrus.Errorln("find result is nil")
 		return
 	}
 	find_group := gojsonq.New().FromString(string(resp)).Find("group_id")
 	if find_group == nil {
-		logrus.Errorln("find_group result is nil")
 		return
 	}
-	if find.(string) != "group" || find_group.(float64) != global.MOYUQUN {
+	if find.(string) != "group" || find_group.(float64) != global.DAIBIAODAHUI {
 		logrus.Println("find_type: ", find.(string), " group: ", find_group.(float64))
 		return
 	}
@@ -51,34 +51,14 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//通道和协程处理后面写,后面要拆开实现
-	if split[0] == "百科" {
-		err, rs := service.GetWikiInfo(split[1])
-		if err != nil {
-			logrus.Errorln(err)
-			return
-		}
-		err = module.SendMsgById(global.MOYUQUN, rs)
-		if err != nil {
-			logrus.Errorln(err)
-		}
-	} else if split[0] == "天气" {
-		err2, result := service.GetWeather(split[1])
-		if err2 != nil {
-			logrus.Errorln("err: ", err2)
-			return
-		}
-		message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,  出门建议:%s", result.Date, result.Week, result.City, result.Wea,
-			result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
-		err := module.SendMsgById(global.MOYUQUN, message)
-		if err != nil {
-			logrus.Errorln(err)
-		}
-	}
+	go GotoSendMsg(split[0], split[1])
 }
 
 func main() {
 	go BeginTask()
 	logrus.Println("定时任务开始")
+	go Gc()
+	logrus.Info("GC定时任务开始")
 	http.HandleFunc("/", ServeHTTP)
 	logrus.Println("监听开始")
 	//监听httpserver
@@ -129,4 +109,61 @@ func BeginTask() {
 	c.AddFunc(spec, Task)
 	c.Start()
 	select {}
+}
+
+func GotoSendMsg(key, value string) {
+	if key == "百科" {
+		err, rs := service.GetWikiInfo(value)
+		if err != nil {
+			logrus.Errorln(err)
+			return
+		}
+		err = module.SendMsgById(global.MOYUQUN, rs)
+		if err != nil {
+			logrus.Errorln(err)
+		}
+	} else if key == "天气" {
+		err2, result := service.GetWeather(value)
+		if err2 != nil {
+			logrus.Errorln("err: ", err2)
+			return
+		}
+		message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,  出门建议:%s", result.Date, result.Week, result.City, result.Wea,
+			result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
+		err := module.SendMsgById(global.MOYUQUN, message)
+		if err != nil {
+			logrus.Errorln(err)
+		}
+	} else if key == "原神抽卡" {
+		if value == "单抽" {
+			result := utils.DrawCord(1)
+			if result == nil {
+				return
+			}
+			err := module.SendMsgById(global.DAIBIAODAHUI, result[0])
+			if err != nil {
+				logrus.Errorln(err)
+			}
+		} else if value == "十连抽" {
+			result := utils.DrawCord(2)
+			if result == nil {
+				return
+			}
+			rs := strings.Join(result, ",")
+			err := module.SendMsgById(global.DAIBIAODAHUI, rs)
+			if err != nil {
+				logrus.Errorln(err)
+			}
+		}
+	}
+}
+
+func Gc() {
+	for {
+		go func() {
+			runtime.GC()
+			logrus.Info("begin GC", time.Now())
+		}()
+		time.Sleep(90 * time.Minute)
+	}
 }
