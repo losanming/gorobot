@@ -24,7 +24,7 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp, err := ioutil.ReadAll(r.Body)
-	if !ErrHandler(err) {
+	if !ErrHandlers(err) {
 		return
 	}
 	find := gojsonq.New().FromString(string(resp)).Find("message_type")
@@ -71,7 +71,7 @@ func main() {
 		}
 	}()
 	err := server.ListenAndServe()
-	if !ErrHandler(err) {
+	if !ErrHandlers(err) {
 		return
 	}
 }
@@ -105,7 +105,7 @@ func Task() {
 
 func BeginTask() {
 	c := cron.New()
-	spec := "10 0/3 * * *"
+	spec := global.CRON
 	c.AddFunc(spec, Task)
 	c.Start()
 	select {}
@@ -118,7 +118,7 @@ func GotoSendMsg(key, value string) {
 			logrus.Errorln(err)
 			return
 		}
-		err = module.SendMsgById(global.MOYUQUN, rs)
+		err = module.SendMsgById(global.DAIBIAODAHUI, rs)
 		if err != nil {
 			logrus.Errorln(err)
 		}
@@ -130,7 +130,7 @@ func GotoSendMsg(key, value string) {
 		}
 		message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,  出门建议:%s", result.Date, result.Week, result.City, result.Wea,
 			result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
-		err := module.SendMsgById(global.MOYUQUN, message)
+		err := module.SendMsgById(global.DAIBIAODAHUI, message)
 		if err != nil {
 			logrus.Errorln(err)
 		}
@@ -155,6 +155,8 @@ func GotoSendMsg(key, value string) {
 				logrus.Errorln(err)
 			}
 		}
+	} else if key == "原神角色" {
+
 	}
 }
 
@@ -166,4 +168,12 @@ func Gc() {
 		}()
 		time.Sleep(90 * time.Minute)
 	}
+}
+
+func ErrHandlers(err error) bool {
+	if err != nil {
+		logrus.Errorln(err)
+		return false
+	}
+	return true
 }

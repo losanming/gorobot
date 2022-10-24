@@ -2,10 +2,8 @@ package service
 
 import (
 	"encoding/json"
-	"example.com/m/module"
 	"example.com/m/utils"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	url2 "net/url"
 )
 
@@ -48,50 +46,6 @@ type WeatherResponse struct {
 		Jinghuaqi  string `json:"jinghuaqi"`
 	} `json:"aqi"`
 	Code int `json:"code"`
-}
-
-func BeginChannel(c chan []string) {
-	var c_close bool
-	for {
-		if c_close {
-			return
-		}
-		select {
-		case split, ok := <-c:
-			if !ok {
-				c_close = true
-			} else {
-				if split[0] == "百科" {
-					err, rs := GetWikiInfo(split[1])
-					if err != nil {
-						logrus.Errorln(err)
-						return
-					}
-					err = module.SendMsgById(540513551, rs)
-					if err != nil {
-						logrus.Errorln(err)
-					}
-				} else if split[0] == "天气" {
-					err2, result := GetWeather(split[1])
-					if err2 != nil {
-						logrus.Errorln("err: ", err2)
-						return
-					}
-
-					message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,出门建议:%s", result.Date, result.Week, result.City, result.Wea,
-						result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
-
-					err := module.SendMsgById(540513551, message)
-					if err != nil {
-						logrus.Errorln(err)
-					}
-				}
-			}
-		default:
-			fmt.Println("input is wrong")
-			return
-		}
-	}
 }
 
 func GetWikiInfo(find string) (err error, rs string) {

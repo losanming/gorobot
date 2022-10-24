@@ -49,7 +49,7 @@ func SendRequest(url string, body io.Reader, addHeaders map[string]string, metho
 }
 
 func GetBaseUrl(path string) (url string) {
-	url = global.HOSTPORT + path
+	url = global.LOCALHOSTPORT + path
 	return url
 }
 

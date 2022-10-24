@@ -54,7 +54,7 @@ type SendGroupMsg struct {
 }
 
 func GetGroupList() (group_list GroupList, err error) {
-	url := global.HOSTPORT + "get_group_list"
+	url := global.LOCALHOSTPORT + "get_group_list"
 	resp, err := utils.SendRequest(url, nil, nil, "GET")
 	if err != nil {
 		return
@@ -67,7 +67,7 @@ func GetGroupList() (group_list GroupList, err error) {
 }
 func GetGroupMemberInfoByGroupId(id int64) (temp GroupMemberInfoList, err error) {
 	var group_member_info_list GroupMemberList
-	url := global.HOSTPORT + fmt.Sprintf("get_group_member_list?group_id=%v&no_cache=false", id)
+	url := global.LOCALHOSTPORT + fmt.Sprintf("get_group_member_list?group_id=%v&no_cache=false", id)
 	resp, err := utils.SendRequest(url, nil, nil, "GET")
 	if err != nil {
 		return
@@ -82,7 +82,7 @@ func GetGroupMemberInfoByGroupId(id int64) (temp GroupMemberInfoList, err error)
 }
 
 func SendGroupMsgByGroupId(group_id int64, msg string) {
-
+	//@@TODO
 }
 
 func SendMsgById(group_id int64, msg string) (err error) {
