@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 )
@@ -71,4 +72,11 @@ func GetRandomIndex() int64 {
 	rand.Seed(time.Now().UnixNano())
 	n := rand.Int63n(199) + 1
 	return n
+}
+
+func Exit() {
+	fmt.Println("5s 后关闭程序")
+	time.AfterFunc(5*time.Second, func() {
+		os.Exit(1)
+	})
 }

@@ -1,15 +1,48 @@
 package utils
 
-var FourStat_up = []string{"早柚", "坎蒂丝", "久岐忍"}
+import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"os"
+)
+
+var FourStat_up = []string{}
 
 // 常驻
-var FourPermannet = []string{"西风剑", "西风大剑", "西风猎弓", "西风秘典", "西风长枪", "祭礼剑", "祭礼大剑", "祭礼弓", "祭礼残章", "匣里灭尘", "匣里龙吟", "钟剑",
-	"绝弦", "流浪乐章", "笛剑", "雨裁", "弓藏", "昭心", "托马", "烟绯", "班尼特", "辛焱", "香菱", "行秋", "芭芭拉", "早柚", "砂糖", "九条裟罗", "雷泽", "北斗", "菲谢尔",
-	"罗莎莉亚", "重云", "迪奥娜", "云堇", "五郎", "凝光", "诺艾尔", "鹿野苑平藏", "久岐忍", "柯莱", "多莉", "坎蒂丝"}
+var FourPermannet = []string{}
 
-var ThreePermanent = []string{"冷刃", "黎明神剑", "吃虎鱼刀", "飞天御剑", "铁影阔剑", "沐浴龙血的剑", "白铁大剑", "以理服人", "飞天大御剑", "白缨枪", "钺矛",
-	"黑缨枪", "魔导绪论", "讨龙英杰谭", "异世界行记", "翡玉法球", "甲级宝珏", "鸦羽弓", "神射手之誓", "反曲弓", "弹弓", "信使"}
+var ThreePermanent = []string{}
 
-var Five_up = []string{"赛诺"}
+var Five_up = []string{}
 
-var Five_card = []string{"刻晴", "七七", "莫娜", "琴", "迪卢克"}
+var Five_card = []string{}
+
+type Card struct {
+	FourStatUp     []string
+	FourPermannet  []string
+	ThreePermanent []string
+	Five_up        []string
+	Five_card      []string
+}
+
+func init() {
+	var c Card
+	open, err := os.Open("./config/genshin.json")
+	if err != nil {
+		fmt.Println("read file is failed")
+		Exit()
+	}
+	b, err := ioutil.ReadAll(open)
+	if err != nil {
+		fmt.Println("err :", err)
+		Exit()
+	}
+	json.Unmarshal(b, &c)
+
+	FourStat_up = c.FourStatUp
+	FourPermannet = c.FourPermannet
+	ThreePermanent = c.ThreePermanent
+	Five_up = c.Five_up
+	Five_card = c.Five_card
+}

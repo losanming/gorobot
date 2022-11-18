@@ -28,7 +28,7 @@ func Sixin() string {
 		gaiup = 0
 		return result
 	} else if gaiup == 0 {
-		a = rand.Intn(42)
+		a = rand.Intn(len(FourPermannet))
 		result := tongyong(a)
 		gaiup = 1
 		if a == 20 || a == 21 || a == 27 {

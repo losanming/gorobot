@@ -19,7 +19,7 @@ var baodi int = 0      //出金小保底 全局变量
 func xiaobaodi() string {
 	if baodi == 0 {
 		var a int = rand.Intn(10)
-		var b int = rand.Intn(5)
+		var b int = rand.Intn(len(Five_card))
 		if a <= 4 {
 			baodi = 0
 			return Five_up[0]

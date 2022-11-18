@@ -35,7 +35,7 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if find_group == nil {
 		return
 	}
-	if find.(string) != "group" || find_group.(float64) != global.DAIBIAODAHUI {
+	if find.(string) != "group" || int64(find_group.(float64)) != global.DAIBIAODAHUI {
 		logrus.Println("find_type: ", find.(string), " group: ", find_group.(float64))
 		return
 	}
@@ -80,12 +80,20 @@ func init() {
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	writer2 := os.Stdout
 	logrus.SetLevel(logrus.InfoLevel)
+	_, err := os.Stat("./logs")
+	if err != nil {
+		err := os.MkdirAll(fmt.Sprintf("./logs"), 0766)
+		if err != nil {
+			panic("mkdir is failer ")
+		}
+	}
 	writer3, err := os.OpenFile("./logs/server.log", os.O_WRONLY|os.O_CREATE,
 		0777)
 	if err != nil {
 		return
 	}
 	logrus.SetOutput(io.MultiWriter(writer2, writer3))
+	fmt.Println("log load is ok")
 }
 
 func Task() {
@@ -118,7 +126,7 @@ func GotoSendMsg(key, value string) {
 			logrus.Errorln(err)
 			return
 		}
-		err = module.SendMsgById(global.DAIBIAODAHUI, rs)
+		err = module.SendMsgById(int64(global.DAIBIAODAHUI), rs)
 		if err != nil {
 			logrus.Errorln(err)
 		}
