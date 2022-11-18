@@ -11,9 +11,9 @@
 
 相关操作(安装完成go-cqhttp完成登录和配置文件修改)
 ```azure
-修改 global/global.go文件的LOCALHOSTPORT为自己的服务器地址
-修改 global/global.go文件的DAIBIAODAHUI为目标的群号
-开启服务
+修改 config/config.ini文件的url为自己的服务器地址和go-cqhttp对外端口
+修改 config/config.ini文件的group_id为目标的群号
+启动服务
 ```
 ```azure
 天气查询
@@ -27,7 +27,7 @@
 ```
 原神抽卡
 ```azure
-项目版本是3.0版本，如要修改行在utils/genshinconfig.go内修改常驻和UP池
+项目版本是3.0版本，如要修改行在config/genshin.json内修改常驻和UP池,原神抽卡算法在utils文件下
 ```
 每日干饭推荐
 ```azure
@@ -39,4 +39,12 @@
 此项目闲暇之余写着练手，有很多地方可以进行优化，比如制定协议，使用goroutine和channel发挥golang的特性，根据go-cqhttp对外提供的API接口可以进行更多的业务操作
     如有问题可以跟我联系QQ:1321291309,我的邮箱losanming@163.com
 
+```
+config/config.ini模板
+```azure
+;url cqhttp地址和端口   group_id QQ群号   cron 自动模板
+[common]
+url = ""
+group_id = ""
+cron = "10 0/3 * * *"
 ```
