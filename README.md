@@ -1,6 +1,11 @@
 ```azure
 这是一个QQ群机器人，已支持天气查询，百度百科查询，原神模拟抽卡(保底TODO),每日干饭推荐
 ```
+任务计划
+```
+    v1.1 新增原魔重开模拟器（参考人生重开模拟器）功能
+         新增原神抽卡图片显示功能
+```
 前提条件
 配置go-cqhttp [文档地址](https://docs.go-cqhttp.org/guide/#go-cqhttp)
 相关操作示例[demo](https://blog.csdn.net/tagagi/article/details/121089116)
