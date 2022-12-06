@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"example.com/m/global"
 	"example.com/m/module"
 	"example.com/m/service"
@@ -14,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -94,6 +96,7 @@ func init() {
 	}
 	logrus.SetOutput(io.MultiWriter(writer2, writer3))
 	fmt.Println("log load is ok")
+
 }
 
 func Task() {
@@ -163,8 +166,33 @@ func GotoSendMsg(key, value string) {
 				logrus.Errorln(err)
 			}
 		}
-	} else if key == "原神角色" {
+	} else if key == "原魔人生" {
+		split := strings.Split(value, ",")
+		if len(split) != 3 {
+			err := module.SendMsgById(global.DAIBIAODAHUI, fmt.Sprintf("输入的参数有误 param: %s", value))
+			if err != nil {
+				logrus.Errorln(err)
+				return
+			}
+			atoi, _ := strconv.Atoi(split[0])
+			param := atoi
 
+			atoi1, _ := strconv.Atoi(split[1])
+			param1 := atoi1
+
+			atoi2, _ := strconv.Atoi(split[2])
+			param2 := atoi2
+
+			if (param <= 0 || param > 10) || (param1 <= 0 || param1 > 10) || (param2 <= 0 || param2 > 10) || (param+param1+param2 != 10) {
+				err := module.SendMsgById(global.DAIBIAODAHUI, fmt.Sprintf("输入的参数有误 param: %v %v %v", param, param1, param2))
+				if err != nil {
+					logrus.Errorln(errors.New("输入天赋参数格式有误"))
+					return
+				}
+			}
+			//业务处理
+
+		}
 	}
 }
 
