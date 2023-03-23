@@ -19,6 +19,13 @@ var (
 	HELP   = 3 // 帮助信息
 )
 
+//API
+
+var (
+	MOYU   = "https://api.vvhan.com/api/moyu?type=json"
+	DAY60S = "https://api.vvhan.com/api/60s?type=json"
+)
+
 // APIKEYS
 const (
 	FUTUREWEATHERKEY = "251518e073ef6c3c9504dd286c3f6a86"

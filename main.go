@@ -7,7 +7,6 @@ import (
 	"example.com/m/service"
 	"example.com/m/utils"
 	"fmt"
-	"github.com/robfig/cron/v3"
 	"github.com/sirupsen/logrus"
 	"github.com/thedevsaddam/gojsonq"
 	"io"
@@ -57,9 +56,9 @@ func ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	go BeginTask()
+	go service.BeginTask()
 	logrus.Println("定时任务开始")
-	go Gc()
+	//go Gc()
 	logrus.Info("GC定时任务开始")
 	http.HandleFunc("/", ServeHTTP)
 	logrus.Println("监听开始")
@@ -99,29 +98,6 @@ func init() {
 
 }
 
-func Task() {
-	lists, err := utils.GetMenusListByFile()
-	if err != nil {
-		logrus.Errorln("get menus is fail err : ", err)
-		return
-	}
-	menu_info := lists[utils.GetRandomIndex()]
-	msg := fmt.Sprintf("今天吃什么呢？就是它了： %s,我们要怎么做呢？ %s", menu_info.Name, menu_info.Info)
-	err = module.SendMsgById(413944516, msg)
-	if err != nil {
-		fmt.Println("err : ", err)
-		return
-	}
-}
-
-func BeginTask() {
-	c := cron.New()
-	spec := global.CRON
-	c.AddFunc(spec, Task)
-	c.Start()
-	select {}
-}
-
 func GotoSendMsg(key, value string) {
 	if key == "百科" {
 		err, rs := service.GetWikiInfo(value)
@@ -129,29 +105,30 @@ func GotoSendMsg(key, value string) {
 			logrus.Errorln(err)
 			return
 		}
-		err = module.SendMsgById(int64(global.DAIBIAODAHUI), rs)
+		err = module.SendMsgById(int64(global.DAIBIAODAHUI), rs, false)
 		if err != nil {
 			logrus.Errorln(err)
 		}
 	} else if key == "天气" {
-		err2, result := service.GetWeather(value)
-		if err2 != nil {
-			logrus.Errorln("err: ", err2)
-			return
-		}
-		message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,  出门建议:%s", result.Date, result.Week, result.City, result.Wea,
-			result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
-		err := module.SendMsgById(global.DAIBIAODAHUI, message)
-		if err != nil {
-			logrus.Errorln(err)
-		}
+		//err2, result := service.GetWeather(value)
+		//if err2 != nil {
+		//	logrus.Errorln("err: ", err2)
+		//	return
+		//}
+		//message := fmt.Sprintf("今天是%s,%s,%s今天%s,最高温度%s,最低温度%s,实时温度%s,%s,大风等级是%s,风速%s。空气质量%s,  出门建议:%s", result.Date, result.Week, result.City, result.Wea,
+		//	result.Tem1, result.Tem2, result.Tem, result.Win, result.WinSpeed, result.WinSpeed, result.Aqi.AirLevel, result.Aqi.AirTips)
+		//err := module.SendMsgById(global.DAIBIAODAHUI, message, false)
+		//if err != nil {
+		//	logrus.Errorln(err)
+		//}
+		service.MoYu()
 	} else if key == "原神抽卡" {
 		if value == "单抽" {
 			result := utils.DrawCord(1)
 			if result == nil {
 				return
 			}
-			err := module.SendMsgById(global.DAIBIAODAHUI, result[0])
+			err := module.SendMsgById(global.DAIBIAODAHUI, result[0], false)
 			if err != nil {
 				logrus.Errorln(err)
 			}
@@ -161,7 +138,7 @@ func GotoSendMsg(key, value string) {
 				return
 			}
 			rs := strings.Join(result, ",")
-			err := module.SendMsgById(global.DAIBIAODAHUI, rs)
+			err := module.SendMsgById(global.DAIBIAODAHUI, rs, false)
 			if err != nil {
 				logrus.Errorln(err)
 			}
@@ -169,7 +146,7 @@ func GotoSendMsg(key, value string) {
 	} else if key == "原魔人生" {
 		split := strings.Split(value, ",")
 		if len(split) != 3 {
-			err := module.SendMsgById(global.DAIBIAODAHUI, fmt.Sprintf("输入的参数有误 param: %s", value))
+			err := module.SendMsgById(global.DAIBIAODAHUI, fmt.Sprintf("输入的参数有误 param: %s", value), false)
 			if err != nil {
 				logrus.Errorln(err)
 				return
@@ -184,7 +161,7 @@ func GotoSendMsg(key, value string) {
 			param2 := atoi2
 
 			if (param <= 0 || param > 10) || (param1 <= 0 || param1 > 10) || (param2 <= 0 || param2 > 10) || (param+param1+param2 != 10) {
-				err := module.SendMsgById(global.DAIBIAODAHUI, fmt.Sprintf("输入的参数有误 param: %v %v %v", param, param1, param2))
+				err := module.SendMsgById(global.DAIBIAODAHUI, fmt.Sprintf("输入的参数有误 param: %v %v %v", param, param1, param2), false)
 				if err != nil {
 					logrus.Errorln(errors.New("输入天赋参数格式有误"))
 					return

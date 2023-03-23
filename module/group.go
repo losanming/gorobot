@@ -6,6 +6,7 @@ import (
 	"example.com/m/global"
 	"example.com/m/utils"
 	"fmt"
+	url2 "net/url"
 )
 
 type GroupInfo struct {
@@ -85,15 +86,19 @@ func SendGroupMsgByGroupId(group_id int64, msg string) {
 	//@@TODO
 }
 
-func SendMsgById(group_id int64, msg string) (err error) {
+func SendMsgById(group_id int64, msg string, autoEscape bool) (err error) {
 	var send SendGroupMsg
 	send.GroupId = group_id
 	send.Message = msg
-	send.AutoEscape = false
+	send.AutoEscape = autoEscape
 	data, _ := json.Marshal(send)
+	url := url2.URL{}
+	url.Scheme = "http"
+	url.Host = global.LOCALHOSTPORT
+	url.Path = "send_group_msg"
 
-	url := global.LOCALHOSTPORT + fmt.Sprintf("send_group_msg")
-	_, err = utils.SendRequest(url, bytes.NewBuffer(data), nil, "POST")
+	//url := global.LOCALHOSTPORT + fmt.Sprintf("send_group_msg")
+	_, err = utils.SendRequest(url.String(), bytes.NewBuffer(data), nil, "POST")
 	if err != nil {
 		return err
 	}

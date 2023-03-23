@@ -2,10 +2,21 @@ package module
 
 import (
 	"encoding/json"
+	"example.com/m/utils"
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"os"
+)
+
+var (
+	age           = 0
+	init_physique = 0
+	init_lucky    = 0
+	init_wisdom   = 0
+	real_physique = 0
+	real_lucky    = 0
+	real_wisdom   = 0
 )
 
 // 年龄行为
@@ -37,6 +48,37 @@ type DieEvennt struct {
 var GenShinAge Age
 var GenShinDayEvents DayEvents
 var GenShinDieEvents DieEvennt
+
+// Physique体质 lucky幸运 wisdom智慧
+func Reload(Physique, lucky, wisdom int) (err error) {
+	init_wisdom = wisdom
+	init_lucky = lucky
+	init_physique = Physique
+
+	return err
+}
+
+func CheckEvent(event_id int) {
+	switch event_id {
+	case 114918:
+		// 生成 start<= x <end 的随机数
+		var num = utils.GenShinGetRandomIndex(50)
+		age += int(num)
+		break
+	case 117418:
+		age = 1
+		break
+	case 120718:
+		age++
+		break
+	case 124918:
+		var num = utils.GenShinGetRandomIndex(50)
+		age += int(num)
+		break
+	default:
+		return
+	}
+}
 
 func init() {
 	//加载事件线
@@ -83,4 +125,28 @@ func init() {
 		return
 	}
 	logrus.Info("load genshin is ok")
+}
+
+// 校验种族
+func CheckRace(events_id int) string {
+	if events_id%10000 == 12 {
+		return "yuansu"
+	} else if events_id%10000 == 11 {
+		return "qiuqiu"
+	}
+	return ""
+}
+
+func BeginReload() {
+	//获取种族
+
+}
+
+func LoadOneEvent() {
+	if age < 1 || age > 100 {
+		return
+	}
+	fmt.Printf("第 %v 月", age)
+	//获取该月份随机事件
+
 }
